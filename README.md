@@ -1,0 +1,2 @@
+# AliyunTensorflowGPUAnsible
+用于阿里云GPU服务器部署Tensorflow的Ansible脚本
