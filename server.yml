@@ -1,0 +1,27 @@
+---
+# This playbook deploys the whole application stack.
+
+- name: deploy aliyun gpu tensorflow server
+  hosts: server
+  remote_user: root
+  vars:
+    hostname_domain: mytensor.com
+    hostname_name: dev.mytensor.com
+    timezone_zone: Asia/Shanghai
+    cuda_repo: cuda-repo-ubuntu1604_8.0.61-1_amd64
+    cudnn_file: cudnn-8.0-linux-x64-v6.0
+    locale_enabled: yes
+    locale_locales:
+      - en_US.UTF-8
+      - zh_CN.UTF-8
+
+  roles:
+    - hostname
+    - timezone
+    - Stouts.locale
+    - common
+    - nvidia
+    - tensorflow
+
+
+

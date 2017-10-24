@@ -1,0 +1,26 @@
+---
+
+- name: Upgrade all packages to the latest version
+  apt: update_cache=yes upgrade=dist
+  
+- name: Install base soft
+  apt: name={{ item }} state=present
+  with_items:
+    - htop
+    - ntpdate
+    - iftop
+    - wget
+    - curl
+    - rsync
+    - git
+    - vim
+    - fail2ban
+    - sudo
+  
+- name: Config VIM
+  template: src=vimrc.j2 dest=/root/.vimrc mode=0755 owner=root group=root  
+  
+- name: Ensure fail2ban is running and enabled on boot.
+  service: name=fail2ban state=started enabled=yes
+  
+

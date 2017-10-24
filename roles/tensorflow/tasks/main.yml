@@ -1,0 +1,5 @@
+---
+
+- name: pip install tensorflow
+  pip: name={{ item }}
+  with_items: [ 'tensorflow-gpu', 'pillow', 'lxml' ]
