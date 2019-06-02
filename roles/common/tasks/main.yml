@@ -16,6 +16,8 @@
     - vim
     - fail2ban
     - sudo
+    - unzip
+    - python3-pip
   
 - name: Config VIM
   template: src=vimrc.j2 dest=/root/.vimrc mode=0755 owner=root group=root  

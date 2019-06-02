@@ -3,53 +3,110 @@
 - name: Create src dir
   file: path=/root/src state=directory
 
+- name: Create data dir
+  file: path=/root/data state=directory
 
-- name: Check if cuda-8-0 is installed
-  command: dpkg-query -W cuda-8-0
+- name: Check if cuda-10-0 is installed
+  command: dpkg-query -W cuda-10-0
   register: cuda_check_deb
   failed_when: cuda_check_deb.rc > 1
   changed_when: cuda_check_deb.rc == 1
 
-- name: copy repo to remote
+- name: copy cuda repo to remote
   copy:
     src: "{{cuda_repo}}.deb"
     dest: "/root/src/{{cuda_repo}}.deb"
-  when: cuda_check_deb.rc == 1
-
+  when: 
+    - cuda_check_deb.rc == 1
+    - upload_cuda_cudnn_deb
+    
+- name: Download cuda repo from url
+  get_url:
+    url: "{{cuda_url}}"
+    dest: "/root/src/{{cuda_repo}}.deb"
+  when: 
+    - cuda_check_deb.rc == 1
+    - not upload_cuda_cudnn_deb
+    
 - name: "add nvidia cuda deb"
   apt:
     deb: "/root/src/{{cuda_repo}}.deb"
   when: cuda_check_deb.rc == 1
-
-- name: Update repositories cache and install "cuda-8-0" package
-  apt:
-    name: cuda-8-0
-    update_cache: yes
+  
+- name: Add a key from a file on the Ansible server.
+  apt_key:
+    file: /var/cuda-repo-10-0-local-{{cuda_version}}/7fa2af80.pub
+    state: present
   when: cuda_check_deb.rc == 1
 
-- unarchive: src="{{cudnn_file}}.tgz" dest=/root/src/ mode=0755 owner=root group=root creates=/root/src/cuda/include/cudnn.h
+- name: Update repositories cache and install "cuda-10-0" package
+  apt:
+    name: cuda
+    update_cache: yes
+  when: cuda_check_deb.rc == 1
+  
+- name: Check if cudnn-7-0 is installed
+  command: dpkg-query -W libcudnn7
+  register: cudnn_check_deb
+  failed_when: cudnn_check_deb.rc > 1
+  changed_when: cudnn_check_deb.rc == 1
 
-- copy:
-    src: /root/src/cuda/include/cudnn.h
-    dest: /usr/local/cuda/include/cudnn.h
-    mode: 0644
-    remote_src: True
-
-- name: copy libs
+- name: copy cudnn to remote
   copy:
-    src: /root/src/cuda/lib64/{{item}}
-    dest: /usr/local/cuda/lib64/
-    mode: 0644
-    remote_src: True
-  with_items:
-    ['libcudnn.so', 'libcudnn.so.6', 'libcudnn.so.6.0.21', 'libcudnn_static.a']
+    src: "{{cudnn_repo}}.deb"
+    dest: "/root/src/{{cudnn_repo}}.deb"
+  when: 
+    - cudnn_check_deb.rc == 1
+    - upload_cuda_cudnn_deb
+    
+- name: Download cudnn repo from url
+  get_url:
+    url: "{{cudnn_url}}"
+    dest: "/root/src/{{cudnn_repo}}.deb"
+  when: 
+    - cudnn_check_deb.rc == 1
+    - not upload_cuda_cudnn_deb
 
-- lineinfile:
-    dest: /root/.bashrc
-    regexp: '^export LD_LIBRARY_PATH='
-    line: 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64"'
+- name: "add nvidia cudnn deb"
+  apt:
+    deb: "/root/src/{{cudnn_repo}}.deb"
+  when: cudnn_check_deb.rc == 1
+  
 
-- lineinfile:
-    dest: /root/.bashrc
-    regexp: '^export CUDA_HOME='
-    line: 'export CUDA_HOME=/usr/local/cuda'
+- name: Check if cudnn-7-dev is installed
+  command: dpkg-query -W libcudnn7-dev
+  register: cudnn_dev_check_deb
+  failed_when: cudnn_dev_check_deb.rc > 1
+  changed_when: cudnn_dev_check_deb.rc == 1
+
+- name: copy cudnn dev to remote
+  copy:
+    src: "{{cudnn_dev_repo}}.deb"
+    dest: "/root/src/{{cudnn_dev_repo}}.deb"
+  when: 
+    - cudnn_dev_check_deb.rc == 1
+    - upload_cuda_cudnn_deb
+
+- name: Download cudnn dev repo from url
+  get_url:
+    url: "{{cudnn_dev_url}}"
+    dest: "/root/src/{{cudnn_dev_repo}}.deb"
+  when: 
+    - cudnn_dev_check_deb.rc == 1
+    - not upload_cuda_cudnn_deb
+    
+- name: "add nvidia cudnn dev deb"
+  apt:
+    deb: "/root/src/{{cudnn_dev_repo}}.deb"
+  when: cudnn_dev_check_deb.rc == 1
+  
+- name: download data files
+  get_url:
+    url: "{{ item }}"
+    dest: "/root/data/"
+  with_items: "{{ data_files }}"
+
+  
+
+
+  

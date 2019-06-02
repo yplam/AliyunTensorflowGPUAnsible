@@ -8,8 +8,16 @@
     hostname_domain: mytensor.com
     hostname_name: dev.mytensor.com
     timezone_zone: Asia/Shanghai
-    cuda_repo: cuda-repo-ubuntu1604_8.0.61-1_amd64
-    cudnn_file: cudnn-8.0-linux-x64-v6.0
+    upload_cuda_cudnn_deb: false
+    cuda_version: 10.0.130-410.48
+    cuda_repo: cuda-repo-ubuntu1804-10-0-local-10.0.130-410.48_1.0-1_amd64 
+    cudnn_repo: libcudnn7_7.4.2.24-1+cuda10.0_amd64
+    cudnn_dev_repo: libcudnn7-dev_7.4.2.24-1+cuda10.0_amd64
+    cuda_url: https://******.oss-cn-hangzhou-internal.aliyuncs.com/ml/cuda-repo-ubuntu1804-10-0-local-10.0.130-410.48_1.0-1_amd64.deb
+    cudnn_url: https://******.oss-cn-hangzhou-internal.aliyuncs.com/ml/libcudnn7_7.4.2.24-1%2Bcuda10.0_amd64.deb
+    cudnn_dev_url: https://******.oss-cn-hangzhou-internal.aliyuncs.com/ml/libcudnn7-dev_7.4.2.24-1%2Bcuda10.0_amd64.deb
+    data_files:
+      - https://******.oss-cn-hangzhou-internal.aliyuncs.com/ml/abc.tar.gz
     locale_enabled: yes
     locale_locales:
       - en_US.UTF-8
@@ -22,6 +30,5 @@
     - common
     - nvidia
     - tensorflow
-
 
 

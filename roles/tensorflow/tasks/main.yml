@@ -1,5 +1,9 @@
 ---
 
 - name: pip install tensorflow
-  pip: name={{ item }}
-  with_items: [ 'tensorflow-gpu', 'pillow', 'lxml' ]
+  pip: 
+    name: "{{ item }}"
+    executable: pip3
+  with_items: [ 'tensorflow-gpu', 'pillow', 'lxml', 'numpy', 'scipy', 'tqdm', 'imgaug', 'scikit_image', 'opencv_python']
+
+
